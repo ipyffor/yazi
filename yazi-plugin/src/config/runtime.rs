@@ -2,6 +2,7 @@ use mlua::{IntoLua, Lua, LuaSerdeExt, SerializeOptions, Value};
 use yazi_adapter::EMULATOR;
 use yazi_boot::ARGS;
 use yazi_config::{MGR, PREVIEW, TASKS, THEME};
+use std::env;
 
 use crate::{Composer, url::Url};
 
