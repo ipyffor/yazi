@@ -81,8 +81,35 @@ impl<'a> Runtime<'a> {
 				b"image_quality" => lua.to_value_with(&PREVIEW.image_quality, OPTS)?,
 				b"sixel_fraction" => lua.to_value_with(&PREVIEW.sixel_fraction, OPTS)?,
 
-				b"ueberzug_scale" => lua.to_value_with(&PREVIEW.ueberzug_scale, OPTS)?,
-				b"ueberzug_offset" => lua.to_value_with(&PREVIEW.ueberzug_offset, OPTS)?,
+        b"ueberzug_scale" =>{
+					if let Ok(env_value) = env::var("UEBERZUG_SCALE") {
+						let values: Vec<f32> = env_value.split(',')
+							.filter_map(|s| s.trim().parse().ok())
+							.collect();
+						if values.len() == 4 {
+							lua.to_value_with(&(values[0], values[1], values[2], values[3]), OPTS)?
+						} else {
+							lua.to_value_with(&PREVIEW.ueberzug_scale, OPTS)?
+						}
+					} else {
+						lua.to_value_with(&PREVIEW.ueberzug_scale, OPTS)?
+					}
+				},
+				_ => return Ok(Value::Nil), 
+				b"ueberzug_offset" => {
+					if let Ok(env_value) = env::var("UEBERZUG_OFFSET") {
+						let values: Vec<f32> = env_value.split(',')
+							.filter_map(|s| s.trim().parse().ok())
+							.collect();
+						if values.len() == 4 {
+							lua.to_value_with(&(values[0], values[1], values[2], values[3]), OPTS)?
+						} else {
+							lua.to_value_with(&PREVIEW.ueberzug_offset, OPTS)?
+						}
+					} else {
+						lua.to_value_with(&PREVIEW.ueberzug_offset, OPTS)?
+					}
+				},
 				_ => return Ok(Value::Nil),
 			}
 			.into_lua(lua)
